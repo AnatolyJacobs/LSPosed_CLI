@@ -15,7 +15,7 @@ using namespace std::string_view_literals;
 using namespace std::chrono_literals;
 
 constexpr size_t kMaxLogSize = 4 * 1024 * 1024;
-constexpr long kLogBufferSize = 64 * 1024;
+constexpr long kLogBufferSize = 128 * 1024;
 
 namespace {
 constexpr std::array<char, ANDROID_LOG_SILENT + 1> kLogChar = {
@@ -225,10 +225,10 @@ void Logcat::ProcessBuffer(struct log_msg *buf) {
         modules_print_count_ += PrintLogLine(entry, modules_file_.get());
         shortcut = true;
     }
-    if (verbose_ &&
-        (shortcut || buf->id() == log_id::LOG_ID_CRASH || entry.pid == my_pid_ ||
-         tag == "Dobby"sv || tag == "Magisk"sv || tag == "LSPlant"sv || tag == "LSPlt"sv ||
-         tag.starts_with("LSPosed"sv) || tag.starts_with("zygisk"sv))) [[unlikely]] {
+    if (verbose_ && (shortcut || buf->id() == log_id::LOG_ID_CRASH || entry.pid == my_pid_ ||
+                     tag == "Dobby"sv || tag == "Magisk"sv || tag == "LSPlant"sv ||
+                     tag == "LSPlt"sv || tag.starts_with("LSPosed"sv) || tag == "SELinux"sv ||
+                     tag.starts_with("zygisk"sv))) [[unlikely]] {
         verbose_print_count_ += PrintLogLine(entry, verbose_file_.get());
     }
     if (entry.pid == my_pid_ && tag == "LSPosedLogcat"sv) [[unlikely]] {
@@ -263,8 +263,9 @@ void Logcat::ProcessBuffer(struct log_msg *buf) {
 void Logcat::StartLogWatchDog() {
     constexpr static auto kLogdSizeProp = "persist.logd.size"sv;
     constexpr static auto kLogdTagProp = "persist.log.tag"sv;
-    constexpr static auto kLogdMainSizeProp = "persist.logd.size.main"sv;
     constexpr static auto kLogdCrashSizeProp = "persist.logd.size.crash"sv;
+    constexpr static auto kLogdMainSizeProp = "persist.logd.size.main"sv;
+    constexpr static auto kLogdSystemSizeProp = "persist.logd.size.system"sv;
     constexpr static long kErr = -1;
     std::thread watchdog([this] {
         Log("[LogWatchDog started]\n");
@@ -272,19 +273,23 @@ void Logcat::StartLogWatchDog() {
             enable_watchdog.wait(false);  // Blocking current thread until enable_watchdog is true;
             auto logd_size = GetByteProp(kLogdSizeProp);
             auto logd_tag = GetStrProp(kLogdTagProp);
-            auto logd_main_size = GetByteProp(kLogdMainSizeProp);
             auto logd_crash_size = GetByteProp(kLogdCrashSizeProp);
+            auto logd_main_size = GetByteProp(kLogdMainSizeProp);
+            auto logd_system_size = GetByteProp(kLogdSystemSizeProp);
             Log("[LogWatchDog running] log.tag: " + logd_tag +
-                "; logd.[default, main, crash].size: [" + std::to_string(logd_size) + "," +
-                std::to_string(logd_main_size) + "," + std::to_string(logd_crash_size) + "]\n");
+                "; logd.[default, crash, main, system].size: [" + std::to_string(logd_size) + "," +
+                std::to_string(logd_crash_size) + "," + std::to_string(logd_main_size) + "," +
+                std::to_string(logd_system_size) + "]\n");
             if (!logd_tag.empty() ||
-                !((logd_main_size == kErr && logd_crash_size == kErr && logd_size != kErr &&
-                   logd_size >= kLogBufferSize) ||
-                  (logd_main_size != kErr && logd_main_size >= kLogBufferSize &&
-                   logd_crash_size != kErr && logd_crash_size >= kLogBufferSize))) {
+                !((logd_crash_size == kErr && logd_main_size == kErr && logd_system_size == kErr &&
+                   logd_size != kErr && logd_size >= kLogBufferSize) ||
+                  (logd_crash_size != kErr && logd_crash_size >= kLogBufferSize &&
+                   logd_main_size != kErr && logd_main_size >= kLogBufferSize &&
+                   logd_system_size != kErr && logd_system_size >= kLogBufferSize))) {
                 SetIntProp(kLogdSizeProp, std::max(kLogBufferSize, logd_size));
-                SetIntProp(kLogdMainSizeProp, std::max(kLogBufferSize, logd_main_size));
                 SetIntProp(kLogdCrashSizeProp, std::max(kLogBufferSize, logd_crash_size));
+                SetIntProp(kLogdMainSizeProp, std::max(kLogBufferSize, logd_main_size));
+                SetIntProp(kLogdSystemSizeProp, std::max(kLogBufferSize, logd_system_size));
                 SetStrProp(kLogdTagProp, "");
                 SetStrProp("ctl.start", "logd-reinit");
             }
