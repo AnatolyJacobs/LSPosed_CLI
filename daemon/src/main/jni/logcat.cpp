@@ -226,9 +226,10 @@ void Logcat::ProcessBuffer(struct log_msg *buf) {
         shortcut = true;
     }
     if (verbose_ && (shortcut || buf->id() == log_id::LOG_ID_CRASH || entry.pid == my_pid_ ||
-                     tag == "Dobby"sv || tag == "Magisk"sv || tag == "LSPlant"sv ||
-                     tag == "LSPlt"sv || tag.starts_with("LSPosed"sv) || tag == "SELinux"sv ||
-                     tag.starts_with("zygisk"sv))) [[unlikely]] {
+                     tag == "APatchD"sv || tag == "Dobby"sv || tag == "KernelSU"sv ||
+                     tag == "LSPlant"sv || tag == "LSPlt"sv || tag.starts_with("LSPosed"sv) ||
+                     tag == "Magisk"sv || tag == "SELinux"sv || tag.starts_with("zygisk"sv)))
+        [[unlikely]] {
         verbose_print_count_ += PrintLogLine(entry, verbose_file_.get());
     }
     if (entry.pid == my_pid_ && tag == "LSPosedLogcat"sv) [[unlikely]] {
@@ -250,8 +251,9 @@ void Logcat::ProcessBuffer(struct log_msg *buf) {
             enable_watchdog = false;
             enable_watchdog.notify_one();
             std::system("resetprop -p --delete persist.logd.size");
-            std::system("resetprop -p --delete persist.logd.size.main");
             std::system("resetprop -p --delete persist.logd.size.crash");
+            std::system("resetprop -p --delete persist.logd.size.main");
+            std::system("resetprop -p --delete persist.logd.size.system");
 
             // Terminate the watchdog thread by exiting __system_property_wait firs firstt
             std::system("setprop persist.log.tag V");
