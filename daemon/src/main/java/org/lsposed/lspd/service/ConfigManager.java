@@ -285,10 +285,20 @@ public class ConfigManager {
         }
 
         bool = config.get("enable_cli");
-        bEnableCli = bool != null && (boolean) bool;
+        if (bool == null && BuildConfig.VERSION_NAME.contains("_cli_auto")) {
+            bEnableCli = true;
+            updateModulePrefs("lspd", 0, "config", "enable_cli", bEnableCli);
+        } else {
+            bEnableCli = bool != null && (boolean) bool;
+        }
 
-        bool = config.get("cli_session_timeout");
-        iSessionTimeout = bool == null ? -1 : (int) bool;
+        var value = config.get("cli_session_timeout");
+        if (value == null && BuildConfig.VERSION_NAME.contains("_cli_auto")) {
+            iSessionTimeout = -2;
+            updateModulePrefs("lspd", 0, "config", "cli_session_timeout", iSessionTimeout);
+        } else {
+            iSessionTimeout = value == null ? -1 : (int) value;
+        }
 
         bool = config.get("enable_status_notification");
         enableStatusNotification = bool == null || (boolean) bool;
