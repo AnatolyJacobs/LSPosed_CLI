@@ -1,21 +1,33 @@
-🎉 Android 15 is out now 🎉, let's release a new version 😉!
+🎉 To celebrate the release of Android 16, we are excited to announce a new stable version of LSPosed!
 
-### New features
-1. Fully support Android 15
-2. Use `LSPlt` to hook (stripped) `libart`
-3. New option to disable log watchdog
-4. Open LSPosed manager through WebUI (KernelSU and APatch)
+To better understand LSPosed, we recommend reading our [troubleshooting guide](https://github.com/JingMatrix/LSPosed/issues/123).
 
-### Bugs fixed
-1. Parasitic manager not available in certains devices
-2. `dex2oat` command fails
-3. `CorePatch` and `HideMockLocation` not working in certains devices
-4. LSPosed daemon started in post-fs-data mode triggers Play Integrity detection
-5. LSPosed manager UI breaks when users click on items before the list of modules is fully loaded
-6. Crowdin translation project outdated
+### ✨ What's New
+*   Fully support Android 16.
+*   Hide traces introduced by the `dex2oat` hook.
+*   The LSPosed manager can now be opened via the Action button.
+*   New options have been added to the `Select` menu for scopes.
+*   Allow users to toggle off detectable logging of LSPosed.
 
-### Breaking changes
-1. Use Zygisk API v4
-2. Remove Riru module support
+### 🐛 Bug Fixes
+*   The `LSPlt` hook has been abandoned for efficiency considerations.
+*   Resolved an issue where modules targeting `systemui` (e.g., `ClassicPowerMenu`) were not working.
+*   Removed Telemetry monitoring.
 
-**Full Changelog**: [v1.10.0...v1.10.1](https://github.com/JingMatrix/LSPosed/compare/v1.10.0...v1.10.1)
+### 🔄 Other Changes
+*   The dependency on `topjohnwu/libcxx` has been removed in favor of the official C++ implementation. This will result in a larger release archive for LSPosed.
+
+### 🚀 High-Priority Plans
+*   Creating comprehensive development documentation for LSPosed.
+*   Resolving open issues with assignees.
+
+**Full Changelog**: [v1.10.1...v1.10.2](https://github.com/JingMatrix/LSPosed/compare/v1.10.1...v1.10.2)
+
+<details>
+<summary>❤️ A personal note</summary>
+
+For the past few months, I have been focused on finishing my PhD thesis manuscript, which has limited my active development on LSPosed. I sincerely appreciate the community's passion and support during this time. It has been a pleasure to witness our community grow and thrive around this open-source fork. I am deeply indebted to your trust and respect, which has indeed helped me navigate the unavoidable challenges and depressions faced by a PhD candidate.
+
+Maintaining this project is a joyful responsibility. However, life is a grand museum of passions, and I am constantly called by my devotion to research and teaching at the university. For users eagerly awaiting new features, I want to reassure you that the LSPosed codebase is quite stable and sufficient for its functionality. Moreover, I sincerely encourage developers to join the project. For all users, please consider participating in the [GitHub Discussions](https://github.com/JingMatrix/LSPosed/discussions) to share your experiences and various tips. Nothing is more valuable to an open-source project than an active community.
+
+</details>
