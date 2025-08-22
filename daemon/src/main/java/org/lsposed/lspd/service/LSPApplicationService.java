@@ -181,6 +181,9 @@ public class LSPApplicationService extends ILSPApplicationService.Stub {
 
         if (allowAccess) {
             binder.add(ServiceManager.getCLIService());
+            config.resetCliFailedAttempts();
+        } else {
+            config.recordFailedCliAttempt();
         }
     }
 
