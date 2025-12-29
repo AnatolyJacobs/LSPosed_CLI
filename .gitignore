@@ -10,3 +10,4 @@ apache/build
 .DS_Store
 /build
 /captures
+bin/
