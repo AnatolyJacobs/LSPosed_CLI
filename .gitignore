@@ -1,5 +1,3 @@
-apache/local/generated
-apache/build
 .project
 .settings
 .cache
@@ -8,6 +6,6 @@ apache/build
 /local.properties
 /.idea
 .DS_Store
-/build
+build
 /captures
 bin/
