@@ -22,13 +22,14 @@ public class Utils {
         ENABLE_DISABLE,
         SET_SCOPE,
         LS_SCOPE,
+        AUTH_FAILED,
         NO_DAEMON,
         REMOTE_ERROR
     }
 
-    private static HashMap<String,PackageInfo> packagesMap;
+    private HashMap<String,PackageInfo> packagesMap;
 
-    private static void initPackagesMap(ICLIService managerService) throws RemoteException {
+    private void initPackagesMap(ICLIService managerService) throws RemoteException {
         var packages =
                 managerService.getInstalledPackagesFromAllUsers(PackageManager.GET_META_DATA | PackageManager.MATCH_UNINSTALLED_PACKAGES, true).getList();
         packagesMap = new HashMap<>();
@@ -38,7 +39,7 @@ public class Utils {
         }
     }
 
-    public static boolean validPackageNameAndUserId(ICLIService managerService, String packageName, int userId) throws RemoteException {
+    public boolean validPackageNameAndUserId(ICLIService managerService, String packageName, int userId) throws RemoteException {
         if (packagesMap == null) {
             initPackagesMap(managerService);
         }

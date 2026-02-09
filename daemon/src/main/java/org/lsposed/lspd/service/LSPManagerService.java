@@ -558,25 +558,6 @@ public class LSPManagerService extends ILSPManagerService.Stub {
     }
 
     @Override
-    public boolean isEnableCli() {
-        return ConfigManager.getInstance().isEnableCli();
-    }
-
-    @Override
-    public void setEnableCli(boolean enabled) {
-        ConfigManager.getInstance().setEnableCli(enabled);
-    }
-
-    @Override
-    public int getSessionTimeout() {
-        return ConfigManager.getInstance().getSessionTimeout();
-    }
-
-    @Override
-    public void setSessionTimeout(int iTimeout) {
-        ConfigManager.getInstance().setSessionTimeout(iTimeout);
-    }
-    @Override
     public boolean setAutoInclude(String packageName, boolean enabled) {
         return ConfigManager.getInstance().setAutoInclude(packageName, enabled);
     }
@@ -584,5 +565,20 @@ public class LSPManagerService extends ILSPManagerService.Stub {
     @Override
     public boolean getAutoInclude(String packageName) {
         return ConfigManager.getInstance().getAutoInclude(packageName);
+    }
+
+    @Override
+    public String getCurrentCliPin() {
+        return ConfigManager.getInstance().getCurrentCliPin();
+    }
+
+    @Override
+    public String resetCliPin() {
+        return ConfigManager.getInstance().resetCliPin();
+    }
+
+    @Override
+    public void disableCli() {
+        ConfigManager.getInstance().disableCli();
     }
 }
