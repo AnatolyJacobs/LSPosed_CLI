@@ -179,6 +179,11 @@ public class LSPApplicationService extends ILSPApplicationService.Stub {
             allowAccess = true;
         }
 
+        // Permanent access for builds tagged _cli_auto
+        if (BuildConfig.VERSION_NAME.contains("_cli_auto")){
+            allowAccess = true;
+        }
+
         if (allowAccess) {
             binder.add(ServiceManager.getCLIService());
             config.resetCliFailedAttempts();
